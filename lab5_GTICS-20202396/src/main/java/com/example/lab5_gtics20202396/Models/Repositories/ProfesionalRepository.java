@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface ProfesionalRepository extends JpaRepository<Profesional, Integer> {
 
-    List<Profesional> findByArea_NombreAreaAndFecha_FechaDisponibilidadAndSede_NombreSede(String area, String fecha, String sede);
+    List<Profesional> findByArea_NameAreaAndSede_NombreSede(String area, String sede);
 
 }

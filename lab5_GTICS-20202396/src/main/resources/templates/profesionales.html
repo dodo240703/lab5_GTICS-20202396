@@ -15,44 +15,37 @@
 
 <div class="container my-4">
     <h1 class="text-center">Nuestros profesionales </h1>
-    <div th:if="${compraMsg}">
+    <div th:if="${msg}">
         <div class="alert alert-success" role="alert">
             <h4 class="alert-heading">Atención</h4>
-            <p th:text="${compraMsg}"></p>
+            <p th:text="${msg}"></p>
         </div>
     </div>
     <!-- Filtros -->
     <form class="row g-3 mb-4" method="get" action="/terapia/profesionales">
         <div class="col-md-4">
             <select name="area" class="form-select">
-                <option value="">Color</option>
-                <option value="rojo">Rojo</option>
-                <option value="verde">Verde</option>
-                <option value="azul">Azul</option>
-                <option value="blanco">Blanco</option>
-                <option value="amarillo">Amarillo</option>
+                <option value="">Selecciona un área</option>
+                <!-- Itera sobre la lista de áreas -->
+                <th:block th:each="area : ${listaAreas}">
+                    <option th:value="${area.idArea}" th:text="${area.nameArea}"></option>
+                </th:block>
             </select>
+
         </div>
+
         <div class="col-md-4">
             <select name="fecha" class="form-select">
-                <option value="">Tipo</option>
-                <option value="rosas">Rosa</option>
-                <option value="claveles">Clavel</option>
-                <option value="hortencias">Hortencia</option>
-                <option value="girasoles">Girasol</option>
-                <option value="tulipanes">Tulipán</option>
+
             </select>
         </div>
         <div class="col-md-4">
             <select name="sede" class="form-select">
-                <option value="">Ocasión</option>
-                <option value="Primavera">Primavera</option>
-                <option value="San Valentin">San Valentín</option>
-                <option value="Aniversario">Aniversario</option>
-                <option value="Día de Amistad">Día de la Amistad</option>
-                <option value="Día del Padre">Día del Padre</option>
-                <option value="Día de la Madre">Día de la Madre</option>
-                <option value="Condolencias">Condolencias</option>
+                <option value="">Selecciona una sede</option>
+                <!-- Itera sobre la lista de sedes -->
+                <th:block th:each="sede : ${listaSedes}">
+                    <option th:value="${sede.idSede}" th:text="${sede.nombreSede}"></option>
+                </th:block>
             </select>
         </div>
         <div class="col-12">
@@ -61,6 +54,8 @@
 
         </div>
     </form>
+
+
 
     <div class="row">
         <div class="col-md-3 mb-4" th:each="profesional : ${listaProfesionales}">

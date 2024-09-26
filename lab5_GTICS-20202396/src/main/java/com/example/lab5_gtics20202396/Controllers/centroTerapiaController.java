@@ -29,23 +29,22 @@ public class centroTerapiaController {
     }
 
 
-    @GetMapping("profesionales")
+    @GetMapping("/profesionales")
     public String profesional(@RequestParam(required = false) String area,
-                              @RequestParam(required = false) String fecha,
                               @RequestParam(required = false) String sede,
                               Model model) {
         List<Profesional> listaProfesionales;
         List<Area> listaAreas = areaRepository.findAll();
         List<Sede> listaSedes = sedeRepository.findAll();
 
-        if (area != null && fecha != null && sede != null) {
-            listaProfesionales = profesionalRepository.findByArea_NombreAreaAndFecha_FechaDisponibilidadAndSede_NombreSede(area, fecha, sede);
+        if (area != null && sede != null) {
+            listaProfesionales = profesionalRepository.findByArea_NameAreaAndSede_NombreSede(area, sede);
         } else {
             listaProfesionales = profesionalRepository.findAll();
         }
         model.addAttribute("listaProfesionales", listaProfesionales);
-        model.addAttribute("lis", area);
-        model.addAttribute("fecha", fecha);
+        model.addAttribute("listaAreas", listaAreas);
+        model.addAttribute("listaSedes", listaSedes);
 
         return "profesionales";
     }
