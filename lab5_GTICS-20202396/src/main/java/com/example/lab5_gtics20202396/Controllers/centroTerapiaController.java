@@ -23,8 +23,11 @@ public class centroTerapiaController {
     final CitaRepository citaRepository;
     final PacienteRepository pacienteRepository;
     final RiesgoRepository riesgoRepository;
+    final ForoRepository foroRepository;
+    private final CancionRepository cancionRepository;
+    private final FraseRepository fraseRepository;
 
-    public centroTerapiaController(ProfesionalRepository profesionalRepository, SedeRepository sedeRepository, AreaRepository areaRepository, FechaRepository fechaRepository, CitaRepository citaRepository, PacienteRepository pacienteRepository, RiesgoRepository riesgoRepository) {
+    public centroTerapiaController(ProfesionalRepository profesionalRepository, SedeRepository sedeRepository, AreaRepository areaRepository, FechaRepository fechaRepository, CitaRepository citaRepository, PacienteRepository pacienteRepository, RiesgoRepository riesgoRepository, ForoRepository foroRepository) {
         this.profesionalRepository = profesionalRepository;
         this.sedeRepository = sedeRepository;
         this.areaRepository = areaRepository;
@@ -32,6 +35,7 @@ public class centroTerapiaController {
         this.citaRepository = citaRepository;
         this.pacienteRepository = pacienteRepository;
         this.riesgoRepository = riesgoRepository;
+        this.foroRepository = foroRepository;
     }
 
 
@@ -139,4 +143,34 @@ public class centroTerapiaController {
         return "redirect:/terapia/formRegistrarCita";
 
     }
+
+    @GetMapping("/foro")
+    public String showForo(Model model){
+        List<Foro> listaComentarios = foroRepository.findAll();
+        model.addAttribute("listaComentarios", listaComentarios);
+        return "foro";
+    }
+
+    // Guardar un nuevo comentario
+    @PostMapping("/enviarComentario")
+    public String guardarComentario(@RequestParam String nombrePersona,
+                                    @RequestParam Integer edad,
+                                    @RequestParam String comentario,
+                                    RedirectAttributes redirectAttributes) {
+        if (nombrePersona.isEmpty() || comentario.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "El nombre y el comentario son obligatorios.");
+            return "redirect:/terapia/foro";
+        }
+
+        Foro nuevoComentario = new Foro();
+        nuevoComentario.setNombrePersona(nombrePersona);
+        nuevoComentario.setEdadPersona(edad);
+        nuevoComentario.setComentario(comentario);
+        foroRepository.save(nuevoComentario);
+
+        redirectAttributes.addFlashAttribute("success", "Comentario publicado exitosamente.");
+        return "redirect:/terapia/foro";
+    }
+
+    @GetMapping
 }
