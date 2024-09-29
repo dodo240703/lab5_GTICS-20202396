@@ -2,6 +2,7 @@ package com.example.lab5_gtics20202396.Controllers;
 
 import com.example.lab5_gtics20202396.Models.Dtos.CancionDto;
 import com.example.lab5_gtics20202396.Models.Dtos.CitasInfoDto;
+import com.example.lab5_gtics20202396.Models.Dtos.PacientesRiesgoDto;
 import com.example.lab5_gtics20202396.Models.Entities.*;
 import com.example.lab5_gtics20202396.Models.Repositories.*;
 import org.springframework.stereotype.Controller;
@@ -204,6 +205,21 @@ public class centroTerapiaController {
         model.addAttribute("totalCitasPorEspecialidad", totalCitasPorEspecialidad);
         model.addAttribute("totalCitasPorProfesional", totalCitasPorProfesional);
         return "citas";
+    }
+
+    @GetMapping("/pacientes")
+    public String mostrarPacientes(Model model) {
+        // Obtener todos los pacientes
+        List<Paciente> listaPacientes = pacienteRepository.findAll();
+
+        // Obtener el número de pacientes por riesgo usando un DTO
+        List<PacientesRiesgoDto> pacientesPorRiesgo = pacienteRepository.getTotalPacientesPorRiesgo();
+
+        // Agregar los datos al modelo
+        model.addAttribute("listaPacientes", listaPacientes);
+        model.addAttribute("pacientesPorRiesgo", pacientesPorRiesgo);
+
+        return "pacientes";
     }
 
 

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -22,6 +24,10 @@ public class Paciente {
 
     @Column(name = "edad")
     private Integer edad;
+
+    // Relación con Cita (si es que un paciente puede tener varias citas)
+    @OneToMany(mappedBy = "paciente")
+    private List<Cita> citas;
 
     @Column(name = "pacientescol", length = 45)
     private String pacientescol;
