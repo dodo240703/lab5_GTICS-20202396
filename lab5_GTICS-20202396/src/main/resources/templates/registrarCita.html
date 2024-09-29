@@ -11,7 +11,7 @@
     <h2>Registrar Cita</h2>
 
     <!-- Mensajes de éxito/error -->
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
     <form action="/terapia/reservarCita" method="post" class="row g-3">
@@ -72,14 +72,12 @@
             </select>
         </div>
 
-        <!-- Fecha de Consulta -->
+        <!-- Fecha de Consulta (se actualizará automáticamente) -->
         <div class="col-md-6">
             <label for="idFecha" class="form-label">Fecha de Consulta</label>
             <select class="form-select" id="idFecha" name="idFecha" required>
                 <option value="">Selecciona una fecha</option>
-                <th:block th:each="fecha : ${listaFechas}">
-                    <option th:value="${fecha.id}" th:text="${fecha.fechaDisponibilidad}"></option>
-                </th:block>
+                <!-- Aquí se actualizarán las fechas mediante AJAX -->
             </select>
         </div>
 
@@ -97,8 +95,31 @@
         <!-- Botón de Reservar Cita -->
         <div class="col-12">
             <button type="submit" class="btn btn-primary">Reservar Cita</button>
+            <a href="/terapia/profesionales" class="btn btn-secondary">Volver</a>
         </div>
     </form>
 </div>
+<script>
+    // Escuchar el cambio en el select del profesional
+    document.getElementById("idProfesional").addEventListener("change", function() {
+        var profesionalId = this.value;
+        if (profesionalId) {
+            fetch(`/terapia/fechasPorProfesional?idProfesional=` + profesionalId)
+                .then(response => response.json())
+                .then(data => {
+                    var fechaSelect = document.getElementById("idFecha");
+                    fechaSelect.innerHTML = ""; // Limpiar opciones anteriores
+                    data.forEach(fecha => {
+                        var option = document.createElement("option");
+                        option.value = fecha.id;
+                        option.textContent = fecha.fechaDisponibilidad;
+                        fechaSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error al cargar las fechas:", error));
+        }
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

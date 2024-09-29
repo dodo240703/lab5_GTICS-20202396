@@ -1,17 +1,16 @@
 package com.example.lab5_gtics20202396.Controllers;
 
 import com.example.lab5_gtics20202396.Models.Dtos.CancionDto;
+import com.example.lab5_gtics20202396.Models.Dtos.CitasInfoDto;
 import com.example.lab5_gtics20202396.Models.Entities.*;
 import com.example.lab5_gtics20202396.Models.Repositories.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/terapia")
@@ -63,6 +62,14 @@ public class centroTerapiaController {
         model.addAttribute("listaFechas", listaFechas);
 
         return "profesionales";
+    }
+
+    @GetMapping("/fechasPorProfesional")
+    @ResponseBody
+    public List<Fecha> obtenerFechasPorProfesional(@RequestParam Integer idProfesional) {
+        Profesional profesional = profesionalRepository.findById(idProfesional)
+                .orElseThrow(() -> new IllegalArgumentException("Profesional no encontrado"));
+        return profesional.getFechasDisponibles();  // Devuelve las fechas en formato JSON
     }
 
     @GetMapping("/formRegistrarCita")
@@ -121,12 +128,24 @@ public class centroTerapiaController {
             redirectAttributes.addFlashAttribute("error", "El profesional no está disponible en la fecha seleccionada.");
             return "redirect:/terapia/formRegistrarCita";
         }
-        // Crear o buscar paciente
-        // Crear o buscar paciente
-        Paciente paciente = pacienteRepository.findByDni(dni)
-                .orElse(new Paciente(nombrePaciente, dni, edad));
-        pacienteRepository.save(paciente);
-        pacienteRepository.save(paciente);
+        // Buscar si el paciente ya existe por DNI
+        Optional<Paciente> pacienteExistente = pacienteRepository.findByDni(dni);
+
+        Paciente paciente;
+
+        if (pacienteExistente.isPresent()) {
+            // Si existe, utilizar el paciente existente
+            paciente = pacienteExistente.get();
+        } else {
+            // Si no existe, crear uno nuevo con los datos ingresados
+            paciente = new Paciente();
+            paciente.setNombrePaciente(nombrePaciente);
+            paciente.setDni(dni);
+            paciente.setEdad(edad);
+
+            // Guardar el nuevo paciente en la base de datos
+            pacienteRepository.save(paciente);
+        }
 
         // Crear y guardar la cita
         Cita nuevaCita = new Cita();
@@ -136,6 +155,7 @@ public class centroTerapiaController {
         nuevaCita.setSede(sede);
         nuevaCita.setFechaConsulta(fecha);
         nuevaCita.setRiesgo(riesgo);
+        nuevaCita.setProfesional(profesional);
 
         citaRepository.save(nuevaCita);
 
@@ -143,9 +163,49 @@ public class centroTerapiaController {
 
 
 
-        return "redirect:/terapia/formRegistrarCita";
+        return "redirect:/terapia/profesionales";
 
     }
+    @GetMapping("/citas")
+    public String mostrarCitas(@RequestParam(required = false) String profesional,
+                               @RequestParam(required = false) String area,
+                               @RequestParam(required = false) String fecha,
+                               @RequestParam(required = false) String riesgo,
+                               @RequestParam(required = false) String sede,
+                               Model model) {
+        List<Profesional> listaProfesional = profesionalRepository.findAll();
+        List<Area> listaAreas = areaRepository.findAll();
+        List<Fecha> listaFechas = fechaRepository.findAll();
+        List<Riesgo> listaRiesgos = riesgoRepository.findAll();
+        List<Sede> listaSedes = sedeRepository.findAll();
+        List<Cita> listaCitas;
+
+        List<CitasInfoDto> totalCitasPorSede = citaRepository.getTotalCitasPorSede();
+        List<CitasInfoDto> totalCitasPorEspecialidad = citaRepository.getTotalCitasPorEspecialidad();
+        List<CitasInfoDto> totalCitasPorProfesional = citaRepository.getTotalCitasPorProfesional();
+
+        if (profesional != null && area != null && fecha != null && riesgo != null && sede != null) {
+            listaCitas = citaRepository.findByFilters(profesional, area, fecha, riesgo, sede);
+        } else {
+            listaCitas = citaRepository.findAll();
+        }
+        if (listaCitas.isEmpty()) {
+            model.addAttribute("mensajeNoCitas", "No se encontraron citas con los filtros seleccionados.");
+        }
+
+        model.addAttribute("listaProfesional", listaProfesional);
+        model.addAttribute("listaCitas", listaCitas);
+        model.addAttribute("listaAreas", listaAreas);
+        model.addAttribute("listaFechas", listaFechas);
+        model.addAttribute("listaRiesgos", listaRiesgos);
+        model.addAttribute("listaSedes", listaSedes);
+
+        model.addAttribute("totalCitasPorSede", totalCitasPorSede);
+        model.addAttribute("totalCitasPorEspecialidad", totalCitasPorEspecialidad);
+        model.addAttribute("totalCitasPorProfesional", totalCitasPorProfesional);
+        return "citas";
+    }
+
 
     @GetMapping("/foro")
     public String showForo(Model model){

@@ -23,7 +23,10 @@ public class Cita {
     @JoinColumn(name = "idpaciente", nullable = false)
     private Paciente paciente;
 
-
+    // Nueva relación con Profesional
+    @ManyToOne
+    @JoinColumn(name = "idprofesional", nullable = false)
+    private Profesional profesional;
 
     @ManyToOne
     @JoinColumn(name = "idarea", nullable = false)

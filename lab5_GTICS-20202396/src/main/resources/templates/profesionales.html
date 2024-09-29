@@ -12,7 +12,7 @@
 <header th:replace="fragments/navBar :: nav_bar"></header>
 <!-- Navbar End -->
 
-
+<div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 <div class="container my-4">
     <h1 class="text-center">Nuestros profesionales </h1>
     <div th:if="${msg}">
@@ -60,9 +60,7 @@
     </form>
 
 
-    <div class="container mb-4">
-        <a href="/terapia/formRegistrarCita" class="btn btn-outline-dark ">Registrar cita xd</a>
-    </div>
+
     <div class="row">
         <div class="col-md-3 mb-4" th:each="profesional : ${listaProfesionales}">
             <div class="card h-100">
@@ -88,6 +86,13 @@
             </div>
         </div>
     </div>
+
+    <div class="card p-4 mb-4 text-center">
+        <h5>¿Has encontrado al profesional adecuado para tu consulta?</h5>
+        <p>Registra tu cita ahora y empieza tu camino hacia el bienestar emocional. Nuestros profesionales están listos para ayudarte.</p>
+        <a href="/terapia/formRegistrarCita" class="btn btn-lg btn btn-outline-dark mt-3">Registrar cita con un profesional</a>
+    </div>
+
 
 </div>
 
