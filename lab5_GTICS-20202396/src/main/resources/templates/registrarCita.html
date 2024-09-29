@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Cita</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Registrar Cita</h2>
+
+    <!-- Mensajes de éxito/error -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form action="/terapia/reservarCita" method="post" class="row g-3">
+        <!-- Nombre del Paciente -->
+        <div class="col-md-6">
+            <label for="nombrePaciente" class="form-label">Nombre y Apellido</label>
+            <input type="text" class="form-control" id="nombrePaciente" name="nombrePaciente" required>
+        </div>
+
+        <!-- Documento de Identidad -->
+        <div class="col-md-6">
+            <label for="dni" class="form-label">Documento de Identidad</label>
+            <input type="text" class="form-control" id="dni" name="dni" required>
+        </div>
+
+        <!-- Edad -->
+        <div class="col-md-6">
+            <label for="edad" class="form-label">Edad</label>
+            <input type="number" class="form-control" id="edad" name="edad" required>
+        </div>
+
+        <!-- Motivo de Consulta -->
+        <div class="col-md-6">
+            <label for="motivoConsulta" class="form-label">Motivo de Consulta</label>
+            <input type="text" class="form-control" id="motivoConsulta" name="motivoConsulta" required>
+        </div>
+
+        <!-- Área de Consulta -->
+        <div class="col-md-6">
+            <label for="idArea" class="form-label">Área de Consulta</label>
+            <select class="form-select" id="idArea" name="idArea" required>
+                <option value="">Selecciona un área</option>
+                <th:block th:each="area : ${listaAreas}">
+                    <option th:value="${area.idArea}" th:text="${area.nameArea}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <!-- Nombre del Profesional -->
+        <div class="col-md-6">
+            <label for="idProfesional" class="form-label">Nombre del Profesional</label>
+            <select class="form-select" id="idProfesional" name="idProfesional" required>
+                <option value="">Selecciona un profesional</option>
+                <th:block th:each="profesional : ${listaProfesionales}">
+                    <option th:value="${profesional.idProfesional}" th:text="${profesional.nombreProfesional}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <!-- Sede de Atención -->
+        <div class="col-md-6">
+            <label for="idSede" class="form-label">Sede de Atención</label>
+            <select class="form-select" id="idSede" name="idSede" required>
+                <option value="">Selecciona una sede</option>
+                <th:block th:each="sede : ${listaSedes}">
+                    <option th:value="${sede.idSede}" th:text="${sede.nombreSede}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <!-- Fecha de Consulta -->
+        <div class="col-md-6">
+            <label for="idFecha" class="form-label">Fecha de Consulta</label>
+            <select class="form-select" id="idFecha" name="idFecha" required>
+                <option value="">Selecciona una fecha</option>
+                <th:block th:each="fecha : ${listaFechas}">
+                    <option th:value="${fecha.id}" th:text="${fecha.fechaDisponibilidad}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <!-- Riesgo de Salud -->
+        <div class="col-md-6">
+            <label for="idRiesgo" class="form-label">Riesgo de Salud</label>
+            <select class="form-select" id="idRiesgo" name="idRiesgo" required>
+                <option value="">Selecciona un nivel de riesgo</option>
+                <th:block th:each="riesgo : ${listaRiesgos}">
+                    <option th:value="${riesgo.idRiesgo}" th:text="${riesgo.tipoRiesgo}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <!-- Botón de Reservar Cita -->
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Reservar Cita</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -28,7 +28,7 @@
                 <option value="">Selecciona un área</option>
                 <!-- Itera sobre la lista de áreas -->
                 <th:block th:each="area : ${listaAreas}">
-                    <option th:value="${area.idArea}" th:text="${area.nameArea}"></option>
+                    <option th:value="${area.nameArea}" th:text="${area.nameArea}"></option>
                 </th:block>
             </select>
 
@@ -36,7 +36,11 @@
 
         <div class="col-md-4">
             <select name="fecha" class="form-select">
-
+                <option value="">Selecciona una fecha</option>
+                <!-- Itera sobre la lista de fechas -->
+                <th:block th:each="fecha : ${listaFechas}">
+                    <option th:value="${fecha.fechaDisponibilidad}" th:text="${fecha.fechaDisponibilidad}"></option>
+                </th:block>
             </select>
         </div>
         <div class="col-md-4">
@@ -44,7 +48,7 @@
                 <option value="">Selecciona una sede</option>
                 <!-- Itera sobre la lista de sedes -->
                 <th:block th:each="sede : ${listaSedes}">
-                    <option th:value="${sede.idSede}" th:text="${sede.nombreSede}"></option>
+                    <option th:value="${sede.nombreSede}" th:text="${sede.nombreSede}"></option>
                 </th:block>
             </select>
         </div>
@@ -56,7 +60,9 @@
     </form>
 
 
-
+    <div class="container mb-4">
+        <a href="/terapia/formRegistrarCita" class="btn btn-outline-dark ">Registrar cita xd</a>
+    </div>
     <div class="row">
         <div class="col-md-3 mb-4" th:each="profesional : ${listaProfesionales}">
             <div class="card h-100">
@@ -66,14 +72,23 @@
                     <p class="card-text" th:text="${profesional.descripcionProfesional}">Descripción profesional</p>
                     <p class="card-text"th:text="'Área: ' + ${profesional.area.nameArea}">areaa</p>
                     <p class="card-text" th:text="${profesional.sede.getNombreSede()}">Sedee</p>
+                    <!-- Fechas disponibles -->
+                    <p class="card-text">Fechas Disponibles:</p>
+                    <ul>
+                        <li th:each="fecha : ${profesional.fechasDisponibles}">
+                            <span th:if="${fecha.fechaDisponibilidad != null}"
+                                  th:text="${fecha.fechaDisponibilidad}">
+                                Fecha disponible
+                            </span>
+                            <span th:if="${fecha.fechaDisponibilidad == null}">Fecha no disponible</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="card-footer d-flex justify-content-center gap-2">
-                    <a class="btn btn-outline-dark btn-sm">Registrar cita xd</a>
 
-                </div>
             </div>
         </div>
     </div>
+
 </div>
 
 

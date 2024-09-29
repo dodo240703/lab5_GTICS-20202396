@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -30,4 +32,9 @@ public class Profesional {
     @ManyToOne
     @JoinColumn(name = "idsede")
     private Sede sede;
+
+    @OneToMany(mappedBy = "profesional")
+    private List<Fecha> fechasDisponibles;
+
+
 }
