@@ -1,5 +1,6 @@
 package com.example.lab5_gtics20202396.Controllers;
 
+import com.example.lab5_gtics20202396.Models.Dtos.CancionDto;
 import com.example.lab5_gtics20202396.Models.Entities.*;
 import com.example.lab5_gtics20202396.Models.Repositories.*;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,7 @@ public class centroTerapiaController {
     private final CancionRepository cancionRepository;
     private final FraseRepository fraseRepository;
 
-    public centroTerapiaController(ProfesionalRepository profesionalRepository, SedeRepository sedeRepository, AreaRepository areaRepository, FechaRepository fechaRepository, CitaRepository citaRepository, PacienteRepository pacienteRepository, RiesgoRepository riesgoRepository, ForoRepository foroRepository) {
+    public centroTerapiaController(ProfesionalRepository profesionalRepository, SedeRepository sedeRepository, AreaRepository areaRepository, FechaRepository fechaRepository, CitaRepository citaRepository, PacienteRepository pacienteRepository, RiesgoRepository riesgoRepository, ForoRepository foroRepository, CancionRepository cancionRepository, FraseRepository fraseRepository) {
         this.profesionalRepository = profesionalRepository;
         this.sedeRepository = sedeRepository;
         this.areaRepository = areaRepository;
@@ -36,6 +37,8 @@ public class centroTerapiaController {
         this.pacienteRepository = pacienteRepository;
         this.riesgoRepository = riesgoRepository;
         this.foroRepository = foroRepository;
+        this.cancionRepository = cancionRepository;
+        this.fraseRepository = fraseRepository;
     }
 
 
@@ -172,5 +175,30 @@ public class centroTerapiaController {
         return "redirect:/terapia/foro";
     }
 
-    @GetMapping
+    @GetMapping("/recursos")
+    public String mostrarRecursos(Model model) {
+        // Obtener las canciones recomendadas (tipoCancion = "recomendada")
+        List<Cancion> cancionesRecomendadas = cancionRepository.findByTipoCancionAndRecurso_IdRecurso("recomendada", 1); // Asume que "1" es el idRecurso relacionado
+
+        // Obtener las canciones no recomendadas (tipoCancion = "no recomendada")
+        List<Cancion> cancionesNoRecomendadas = cancionRepository.findByTipoCancionAndRecurso_IdRecurso("no recomendada", 2);
+
+        // Contar el total de canciones recomendadas y no recomendadas
+        CancionDto cancionDTO = new CancionDto();
+        cancionDTO.setTotalRecomendadas(cancionesRecomendadas.size());
+        cancionDTO.setTotalNoRecomendadas(cancionesNoRecomendadas.size());
+
+        // Obtener frases de ánimo relacionadas con el recurso
+        List<Frase> frasesAnimo = fraseRepository.findByRecurso_IdRecurso(1);
+
+        // Agregar todos los datos al modelo
+        model.addAttribute("cancionesRecomendadas", cancionesRecomendadas);
+        model.addAttribute("cancionesNoRecomendadas", cancionesNoRecomendadas);
+        model.addAttribute("cancionDTO", cancionDTO);
+        model.addAttribute("frasesAnimo", frasesAnimo);
+        model.addAttribute("notaSaludMental", "La salud mental en el país es una prioridad que debe ser tratada con atención. No dudes en buscar ayuda si la necesitas.");
+
+
+        return "recursos";
+    }
 }
